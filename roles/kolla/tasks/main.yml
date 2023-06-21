@@ -1,0 +1,15 @@
+---
+- name: Initializing environment on ubuntu
+  script: kolla-ubuntu.sh
+
+- name: Template out multinode
+  template:
+    src: multinode.j2
+    dest: ~/multinode
+  tags: template
+
+- name: Template out globals.yml
+  template:
+    src: globals.yml.j2
+    dest: /etc/kolla/globals.yml
+  tags: template

@@ -1,0 +1,11 @@
+---
+- name: Install lvm2
+  apt:
+    name: lvm2
+    state: present
+
+- name: Create vg for cinder
+  shell: |
+      pvs | grep -i '/dev/sdb' || pvcreate /dev/sdb
+      vgs | grep -i 'cinder-volumes' || vgcreate cinder-volumes /dev/sdb
+  changed_when: false

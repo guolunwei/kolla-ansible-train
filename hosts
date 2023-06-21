@@ -1,0 +1,17 @@
+[deployment]
+control01
+
+[compute]
+compute01
+
+[storage]
+storage01
+
+[baremetal]
+control01 ansible_host=10.0.0.11
+compute01 ansible_host=10.0.0.31
+storage01 ansible_host=10.0.0.41
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_ssh_user=ubuntu

@@ -1,0 +1,20 @@
+---
+- name: Apply role pip-config
+  gather_facts: no
+  hosts: baremetal
+  roles:
+    - role: pip-config
+
+- name: Apply role volume
+  gather_facts: no
+  hosts: storage
+  become: True
+  roles:
+    - role: volume
+
+- name: Apply role kolla
+  gather_facts: no
+  hosts: deployment
+  roles:
+    - role: kolla
+

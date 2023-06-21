@@ -1,0 +1,22 @@
+---
+- name: Ensuring config directory exists
+  file:
+    path: "~/.pip"
+    state: "directory"
+
+- name: Creating pip configuration file
+  blockinfile:
+    dest: "~/.pip/pip.conf"
+    create: yes
+    block: |
+        [global] 
+        index-url = https://pypi.tuna.tsinghua.edu.cn/simple
+        disable-pip-version-check = true
+        timeout = 60
+        [install]
+        trusted-host = pypi.tuna.tsinghua.edu.cn
+
+- name: Install python3-pip
+  apt:
+    name: python3-pip
+  become: True
