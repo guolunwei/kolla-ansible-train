@@ -27,7 +27,7 @@ control01
 storage01   ansible_host=10.0.0.41  ansible_python_interpreter=/usr/bin/python3
 
 [deployment]
-localhost       ansible_connection=local
+localhost       ansible_connection=local      ansible_python_interpreter=/usr/bin/python3
 
 [baremetal:children]
 control
