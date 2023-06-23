@@ -71,6 +71,7 @@ localhost ansible_connection=local
 
 ## Configure globals.yml
 ```
+---
 kolla_base_distro: "ubuntu"
 kolla_install_type: "binary"
 openstack_release: "train"
@@ -107,36 +108,57 @@ sed -i 's#docker_registry_password:.*#docker_registry_password: my_password#g' /
 ## Perform Deployment
 Now in the next step we are going to install bootstrap servers.
 ```
-kolla-ansible -i /etc/kolla/all-in-one bootstrap-servers
+kolla-ansible -i multinode bootstrap-servers
 ```
 Always do deployment checks.
 ```
-kolla-ansible -i /etc/kolla/all-in-one prechecks
+kolla-ansible -i multinode prechecks
 ```
 In the last step we will perform deployment.
 ```
-kolla-ansible -i /etc/kolla/all-in-one deploy
+kolla-ansible -i multinode deploy
 ```
 Now install curl and the Openstack client tools
 ```
 sudo apt install -y curl python-openstackclient
 ```
 
-## Upload images to private hub
-You can pull images before depoly by using `kolla-ansible pull` , then upload these images to local private hub:
+## Upload images to private hub (optional)
+You can pull images before depoly:
 ```
-for i in $(docker images | grep train | awk '{print $1":"$2}')
+kolla-ansible pull
+```
+Add local private hub to docker config:
+```
+sudo tee /etc/docker/daemon.json <<-'EOF'
+{
+    "insecure-registries": [
+        "10.0.0.10:4000"
+    ],
+    "log-opts": {
+        "max-file": "5",
+        "max-size": "50m"
+    }
+}
+EOF
+sudo systemctl daemon-reload
+sudo systemctl restart docker
+```
+To upload these images to local private hub:
+```
+for i in $(sudo docker images | grep train | awk '{print $1":"$2}')
 do
   bash auto_image_push.sh $i
 done
 ```
 update `/etc/kolla/globals.yml` as below if you use a local private hub to deploy:
 ```
+---
 kolla_base_distro: "ubuntu"
 kolla_install_type: "binary"
 openstack_release: "train"
 kolla_internal_vip_address: "10.0.0.20"
-docker_registry: "http://10.0.0.11:4000"
+docker_registry: "10.0.0.10:4000"
 docker_namespace: "kolla"
 network_interface: "ens33"
 neutron_external_interface: "ens34"
@@ -157,7 +179,7 @@ source admin-openrc.sh
 ```
 The initialization script will create virtual machine resources such as cirros image, network, subnet, routing, security group, specification, quota, etc.
 ```
-cd /home/golinuxcloud/golinux/share/kolla-ansible
+cd venv/share/kolla-ansible
 ./init-runonce
 ```
 Navigate `http://10.0.0.20` to login into the dashboard of OpenStack.
