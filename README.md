@@ -7,7 +7,7 @@ To deploy OpenStack using Kolla Ansible, we will be using VMs created using VMwa
 ```
 Name: control01
 OS: Ubuntu 18.04.6 LTS
-RAM: 6GB
+RAM: 8GB
 Disk: 40 GB
 CPU: Quad Core
 ens33(NAT): 10.0.0.11
